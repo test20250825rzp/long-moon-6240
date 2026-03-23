@@ -1,10 +1,11 @@
 
-import { Navigation } from "@/components/Navigation";
 import { ArticleDetail as ArticleDetailComponent } from "@/components/ArticleDetail";
 import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import { AnimatedCard } from "@/components/AnimatedCard";
+import { cn } from "@/lib/utils";
 
 const articleData = {
   id: "1",
@@ -80,21 +81,23 @@ const ArticleDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
-
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <Button
-          variant="ghost"
-          className="mb-6"
-          onClick={() => navigate("/articles")}
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          返回文章列表
-        </Button>
+        <AnimatedCard animation="slide" delay={100}>
+          <Button
+            variant="ghost"
+            className="mb-6 group hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+            onClick={() => navigate("/articles")}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2 transition-transform duration-300 group-hover:-translate-x-1" />
+            返回文章列表
+          </Button>
+        </AnimatedCard>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <ArticleDetailComponent {...articleData} />
+            <AnimatedCard animation="fade" delay={200}>
+              <ArticleDetailComponent {...articleData} />
+            </AnimatedCard>
           </div>
 
           <div className="lg:col-span-1">
