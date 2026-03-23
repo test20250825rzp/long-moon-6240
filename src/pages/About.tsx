@@ -5,38 +5,53 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Github, Twitter, Mail, MapPin, Link as LinkIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { useState } from "react";
 
 // 关于页面装饰图 - 第三幅图
 const aboutCoverImage = "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&h=400&fit=crop";
 
 const About = () => {
+  const [coverLoaded, setCoverLoaded] = useState(false);
+  const [avatarLoaded, setAvatarLoaded] = useState(false);
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
 
       {/* 关于页面封面图 */}
-      <div className="relative h-[300px] overflow-hidden">
+      <div className="relative h-[300px] overflow-hidden bg-muted">
+        {!coverLoaded && (
+          <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-muted to-muted/50" />
+        )}
         <img
           src={aboutCoverImage}
           alt="About Cover"
-          className="w-full h-full object-cover"
+          className={`w-full h-full object-cover transition-opacity duration-500 ${
+            coverLoaded ? "opacity-100" : "opacity-0"
+          }`}
+          onLoad={() => setCoverLoaded(true)}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-12 -mt-20 relative">
         {/* 个人信息卡片 */}
-        <Card className="mb-8">
+        <Card className="mb-8 shadow-xl">
           <CardContent className="pt-6">
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-              <Avatar className="w-32 h-32 border-4 border-background shadow-lg">
-                <img
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop"
-                  alt="Avatar"
-                  className="w-full h-full object-cover"
-                />
-                <AvatarFallback>博</AvatarFallback>
-              </Avatar>
+              <div className="relative">
+                <Avatar className="w-32 h-32 border-4 border-background shadow-lg bg-muted">
+                  <img
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop"
+                    alt="Avatar"
+                    className={`w-full h-full object-cover transition-opacity duration-300 ${
+                      avatarLoaded ? "opacity-100" : "opacity-0"
+                    }`}
+                    onLoad={() => setAvatarLoaded(true)}
+                  />
+                  <AvatarFallback className="text-2xl">博</AvatarFallback>
+                </Avatar>
+              </div>
               <div className="text-center sm:text-left flex-1">
                 <h1 className="text-3xl font-bold mb-2">博主姓名</h1>
                 <p className="text-muted-foreground mb-4">
@@ -101,7 +116,7 @@ const About = () => {
               ].map((skill) => (
                 <div
                   key={skill.name}
-                  className="bg-muted rounded-lg p-4 text-center"
+                  className="bg-muted rounded-lg p-4 text-center hover:shadow-md transition-shadow"
                 >
                   <div className="font-medium">{skill.name}</div>
                   <div className="text-sm text-muted-foreground">

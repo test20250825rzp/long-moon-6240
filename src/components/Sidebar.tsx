@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Github, Twitter, Mail } from "lucide-react";
+import { useState } from "react";
 
 interface SidebarProps {
   avatarImage: string;
@@ -11,19 +12,37 @@ interface SidebarProps {
 }
 
 export function Sidebar({ avatarImage, name, bio }: SidebarProps) {
+  const [avatarLoaded, setAvatarLoaded] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
+
   return (
     <aside className="space-y-6">
       {/* 个人简介卡片 - 第二幅图（头像） */}
       <Card>
         <CardHeader className="text-center">
-          <Avatar className="w-24 h-24 mx-auto mb-4">
-            <img
-              src={avatarImage}
-              alt={name}
-              className="w-full h-full object-cover"
-            />
-            <AvatarFallback>{name[0]}</AvatarFallback>
-          </Avatar>
+          <div className="relative w-24 h-24 mx-auto mb-4">
+            {!avatarLoaded && !avatarError && (
+              <div className="absolute inset-0 rounded-full animate-pulse bg-muted" />
+            )}
+            <Avatar className="w-24 h-24 mx-auto border-2 border-primary/20">
+              {avatarError ? (
+                <AvatarFallback className="text-lg">{name[0]}</AvatarFallback>
+              ) : (
+                <>
+                  <img
+                    src={avatarImage}
+                    alt={name}
+                    className={`w-full h-full object-cover transition-opacity duration-300 ${
+                      avatarLoaded ? "opacity-100" : "opacity-0"
+                    }`}
+                    onLoad={() => setAvatarLoaded(true)}
+                    onError={() => setAvatarError(true)}
+                  />
+                  <AvatarFallback className="text-lg">{name[0]}</AvatarFallback>
+                </>
+              )}
+            </Avatar>
+          </div>
           <CardTitle className="text-xl">{name}</CardTitle>
         </CardHeader>
         <CardContent className="text-center">
