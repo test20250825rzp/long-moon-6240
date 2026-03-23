@@ -1,11 +1,18 @@
 
-import { Navigation } from "@/components/Navigation";
 import { BlogCard } from "@/components/BlogCard";
 import { Sidebar } from "@/components/Sidebar";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Search } from "lucide-react";
 import { useState } from "react";
+import { AnimatedCard } from "@/components/AnimatedCard";
+import { cn } from "@/lib/utils";
 
 const articlesData = [
   {
@@ -67,66 +74,86 @@ const articlesData = [
 const Articles = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("all");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const filteredArticles = articlesData.filter((article) => {
     const matchesSearch =
       article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       article.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = category === "all" || article.category === category;
+    const matchesCategory =
+      category === "all" || article.category === category;
     return matchesSearch && matchesCategory;
   });
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
-
-      <div className="bg-muted py-12">
+      {/* 页面头部 */}
+      <div className="bg-gradient-to-r from-muted to-muted/50 py-16">
         <div className="max-w-6xl mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-4">全部文章</h1>
-          <p className="text-muted-foreground">
-            浏览所有技术分享、生活随笔与旅行日记
-          </p>
+          <AnimatedCard animation="slide" delay={100}>
+            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              全部文章
+            </h1>
+            <p className="text-muted-foreground">
+              浏览所有技术分享、生活随笔与旅行日记
+            </p>
+          </AnimatedCard>
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-12">
         {/* 搜索和筛选 */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="搜索文章..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+        <AnimatedCard animation="slide" delay={200}>
+          <div className="flex flex-col sm:flex-row gap-4 mb-8">
+            <div className="relative flex-1">
+              <Search
+                className={cn(
+                  "absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 transition-colors duration-300",
+                  isSearchFocused ? "text-primary" : "text-muted-foreground"
+                )}
+              />
+              <Input
+                placeholder="搜索文章..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setIsSearchFocused(false)}
+                className={cn(
+                  "pl-10 transition-all duration-300",
+                  isSearchFocused && "ring-2 ring-primary/20"
+                )}
+              />
+            </div>
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger className="w-full sm:w-[180px]">
+                <SelectValue placeholder="选择分类" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">全部分类</SelectItem>
+                <SelectItem value="技术分享">技术分享</SelectItem>
+                <SelectItem value="生活随笔">生活随笔</SelectItem>
+                <SelectItem value="旅行日记">旅行日记</SelectItem>
+                <SelectItem value="读书笔记">读书笔记</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="选择分类" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">全部分类</SelectItem>
-              <SelectItem value="技术分享">技术分享</SelectItem>
-              <SelectItem value="生活随笔">生活随笔</SelectItem>
-              <SelectItem value="旅行日记">旅行日记</SelectItem>
-              <SelectItem value="读书笔记">读书笔记</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        </AnimatedCard>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             {filteredArticles.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {filteredArticles.map((article) => (
-                  <BlogCard key={article.id} {...article} />
+                {filteredArticles.map((article, index) => (
+                  <BlogCard key={article.id} {...article} index={index} />
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">没有找到匹配的文章</p>
-              </div>
+              <AnimatedCard animation="fade">
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4 animate-float">🔍</div>
+                  <p className="text-muted-foreground">没有找到匹配的文章</p>
+                </div>
+              </AnimatedCard>
             )}
           </div>
 

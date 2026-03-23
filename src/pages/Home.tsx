@@ -1,10 +1,10 @@
 
-import { Navigation } from "@/components/Navigation";
-import { HeroSection } from "@/components/HeroSection";
 import { BlogCard } from "@/components/BlogCard";
+import { HeroSection } from "@/components/HeroSection";
 import { Sidebar } from "@/components/Sidebar";
+import { AnimatedCard } from "@/components/AnimatedCard";
 
-// 模拟数据 - 请替换为您的实际图片 URL
+// 模拟数据
 const blogData = {
   heroImage: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1920&h=600&fit=crop",
   avatarImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop",
@@ -71,9 +71,7 @@ const blogData = {
 const Home = () => {
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
-      
-      {/* 英雄区域 - 第一幅图 */}
+      {/* 英雄区域 */}
       <HeroSection
         heroImage={blogData.heroImage}
         title="欢迎来到我的博客"
@@ -84,15 +82,20 @@ const Home = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* 文章列表 */}
           <div className="lg:col-span-2">
-            <h2 className="text-2xl font-bold mb-6">最新文章</h2>
+            <AnimatedCard animation="slide" delay={200}>
+              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+                <span className="w-1 h-8 bg-primary rounded-full" />
+                最新文章
+              </h2>
+            </AnimatedCard>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {blogData.articles.map((article) => (
-                <BlogCard key={article.id} {...article} />
+              {blogData.articles.map((article, index) => (
+                <BlogCard key={article.id} {...article} index={index} />
               ))}
             </div>
           </div>
 
-          {/* 侧边栏 - 第二幅图（头像） */}
+          {/* 侧边栏 */}
           <div className="lg:col-span-1">
             <Sidebar
               avatarImage={blogData.avatarImage}
